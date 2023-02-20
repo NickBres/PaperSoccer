@@ -4,44 +4,26 @@ import Controller
 
 
 class View:
-    def __init__(self, controller, tilesize):
+    def __init__(self, controller):
         pygame.init()
         self.screen_num = 0
         self.controller = controller
-        self.tile_size = tilesize
-        self.screen_width = 10 * self.tile_size
-        self.screen_height = 10 * self.tile_size
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        self.menu = pygame.image.load('graphics/menu.png').convert()
+        self.tile_size = 70
+        self.screen_width = 0
+        self.screen_height = 0
         pygame.display.set_caption('Paper Soccer')
         self.clock = pygame.time.Clock()
+        self.change_screen(0)
+
+        self.menu = pygame.image.load('graphics/menu.png').convert()
         self.buttons = pygame.sprite.Group()
         self.counts = pygame.sprite.Group()
         self.create_buttons()
-
-        self.run()
-
-    def game_init(self, field):
-        self.field = field
-        self.screen_num = 1
-        self.screen = pygame.display.set_mode((self.field.width * self.tile_size, self.field.height * self.tile_size))
-        self.grass_tiles = pygame.sprite.Group()
-        self.lines = pygame.sprite.GroupSingle()
-        self.lines.add(Lines(self.tile_size, self.field))
-        self.ball = pygame.sprite.GroupSingle()
-        self.ball.add(Ball(self.field, self.tile_size))
-        self.points = pygame.sprite.Group()
-        self.build_field()
-
-    def change_screen(self, screen_num):
-        self.screen_num = screen_num
-        if screen_num == 1:
-            self.screen_width = self.field.width * self.tile_size
-            self.screen_height = self.field.height * self.tile_size
-        if screen_num == 0:
-            self.screen_width = 9 * self.tile_size
-            self.screen_height = 9 * self.tile_size
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.again = pygame.sprite.GroupSingle()
+        self.again_btn()
+        self.font = pygame.font.Font('graphics/square-deal.ttf', 70)
+        self.text = self.font.render('is won', True, 'White')
+        self.text_rect = self.text.get_rect(center=(self.screen_width / 4 - 50, self.screen_height / 2))
 
     def run(self):
         while True:
@@ -72,7 +54,15 @@ class View:
                                     self.controller.set_field(self.counts.sprites()[0].count,
                                                               self.counts.sprites()[1].count)
                                     self.game_init(self.controller.field)
+                if self.screen_num == 2:
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        if self.again.sprite.check_click(event.pos):
+                            self.restart()
 
+                if self.screen_num == 0:
+                    self.screen.blit(self.menu, (0, 0))
+                    self.buttons.draw(self.screen)
+                    self.counts.draw(self.screen)
                 if self.screen_num == 1:
                     self.grass_tiles.draw(self.screen)
                     self.lines.draw(self.screen)
@@ -80,13 +70,43 @@ class View:
                     self.points.draw(self.screen)
                     self.ball.draw(self.screen)
                     self.ball.update(self.field)
-                if self.screen_num == 0:
+                if self.screen_num == 2:
                     self.screen.blit(self.menu, (0, 0))
-                    self.buttons.draw(self.screen)
-                    self.counts.draw(self.screen)
+                    self.again.draw(self.screen)
+                    self.screen.blit(self.text, self.text_rect)
 
                 pygame.display.update()
                 self.clock.tick(60)  # limit the loop to 60 times per sec
+
+    def again_btn(self):
+        button = pygame.image.load('graphics/buttons/b_1.png').convert_alpha()
+        self.again.add(Button(self.screen_width / 4, self.screen_height / 2 + 200, button, 'Again', 'Again'))
+
+    def game_init(self, field):
+        self.field = field
+        self.screen_num = 1
+        self.screen = pygame.display.set_mode((self.field.width * self.tile_size, self.field.height * self.tile_size))
+        self.grass_tiles = pygame.sprite.Group()
+        self.lines = pygame.sprite.GroupSingle()
+        self.lines.add(Lines(self.tile_size, self.field))
+        self.ball = pygame.sprite.GroupSingle()
+        self.ball.add(Ball(self.field, self.tile_size))
+        self.points = pygame.sprite.Group()
+        self.build_field()
+
+    def change_screen(self, screen_num, player=None):
+        self.screen_num = screen_num
+        if screen_num == 2:
+            self.screen_width = 10 * self.tile_size
+            self.screen_height = 10 * self.tile_size
+            self.text = self.font.render(player + ' won', True, 'White')
+        if screen_num == 1:
+            self.screen_width = self.field.width * self.tile_size
+            self.screen_height = self.field.height * self.tile_size
+        if screen_num == 0:
+            self.screen_width = 10 * self.tile_size
+            self.screen_height = 10 * self.tile_size
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
     def build_field(self):
         for x in range(self.field.width):
@@ -113,6 +133,8 @@ class View:
         self.counts.add(Count(self.screen_width / 4, self.screen_height / 2 + 100, 13))
         self.buttons.add(Button(self.screen_width / 4 + 100, self.screen_height / 2 + 100, button2, type='Up2'))
 
+    def restart(self):
+        self.change_screen(0)
 
 class Count(pygame.sprite.Sprite):
     def __init__(self, x, y, count):

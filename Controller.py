@@ -4,10 +4,13 @@ import Model
 
 class Controller:
     player = True
+    view = None
 
     def __init__(self):
         self.field = None
-        self.view = View.View(self, 70)
+        self.view = View.View(self)
+        self.view.run()
+
 
     def make_a_move(self, toX, toY):
         if self.field.can_move(toX, toY):
@@ -16,8 +19,10 @@ class Controller:
             self.field.curr_visited()
             color = self.field.isGoal()
             if color == 'Red':
+                self.view.change_screen(2, 'Red')
                 print('Red wins')
             elif color == 'Blue':
+                self.view.change_screen(2 , 'Blue')
                 print('Blue wins')
         else:
             print('Cant move')
