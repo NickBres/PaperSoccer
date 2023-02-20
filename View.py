@@ -197,7 +197,10 @@ class Lines(pygame.sprite.Sprite):
             fromY = self.tile_size // 2 + (self.tile_size * points[0].y)
             toX = self.tile_size // 2 + (self.tile_size * points[1].x)
             toY = self.tile_size // 2 + (self.tile_size * points[1].y)
+
             width = ((self.tile_size // 10) * 2) - 1
+            if fromY == toY or fromX == toX:
+                width -= 2
             pygame.draw.line(self.image, color, (fromX, fromY), (toX, toY), width)
 
     def update(self, field):
