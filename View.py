@@ -75,6 +75,7 @@ class View:
                     self.lines.draw(self.screen)
                     self.lines.update(self.field)
                     self.points.draw(self.screen)
+                    self.points.update()
                     self.ball.draw(self.screen)
                     self.ball.update(self.field)
                 if self.screen_num == 2:
@@ -123,7 +124,7 @@ class View:
                 self.grass_tiles.add(GrassTile(x * self.tile_size, y * self.tile_size, self.tile_size))
                 self.points.add(
                     Point(self.tile_size // 2 + (self.tile_size * x), self.tile_size // 2 + (self.tile_size * y),
-                          self.tile_size))
+                          self.tile_size, self.field))
 
     def create_buttons(self):
         button = pygame.image.load('graphics/buttons/b_1.png').convert_alpha()
@@ -241,13 +242,27 @@ class Lines(pygame.sprite.Sprite):
 
 
 class Point(pygame.sprite.Sprite):
-    def __init__(self, x, y, tilesize):
+    def __init__(self, x, y, tilesize, field):
         super().__init__()
+        self.field = field
         self.x = x
         self.y = y
         self.tile_size = tilesize
-        self.image = pygame.image.load('graphics/point.png').convert_alpha()
+        self.image_w = pygame.image.load('graphics/points/point.png').convert_alpha()
+        self.image_g = pygame.image.load('graphics/points/point_g.png').convert_alpha()
+        self.image_r = pygame.image.load('graphics/points/point_r.png').convert_alpha()
+        self.image = self.image_w
         self.rect = self.image.get_rect(center=(x, y))
+
+    def update(self):
+        mouse = pygame.mouse.get_pos()
+        isNear = self.field.isNear(self.x // self.tile_size, self.y // self.tile_size)
+        if self.rect.collidepoint(mouse) and isNear:
+            self.image = self.image_g
+        elif self.rect.collidepoint(mouse):
+            self.image = self.image_r
+        else:
+            self.image = self.image_w
 
 
 class GrassTile(pygame.sprite.Sprite):

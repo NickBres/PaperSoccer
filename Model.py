@@ -61,6 +61,9 @@ class Field:
     def curr_visited(self):
         self.points[self.ball.y][self.ball.x].isVisited = True
 
+    def isNear(self, x, y):
+        neighbours = self.point_free_neighbours(self.points[self.ball.y][self.ball.x])
+        return self.points[y][x] in neighbours
     def move(self, toX, toY, player):
         if player:
             self.red_lines.append((self.points[self.ball.y][self.ball.x], self.points[toY][toX]))
