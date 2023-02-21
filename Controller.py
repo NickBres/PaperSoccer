@@ -15,18 +15,24 @@ class Controller:
     def make_a_move(self, toX, toY):
         if self.field.can_move(toX, toY):
             self.field.move(toX, toY, self.player)
+            if self.field.no_moves():
+                if self.player:
+                    self.view.change_screen(2, 'Red')
+                    print('Stuck')
+                else:
+                    self.view.change_screen(2, 'Blue')
+                    print('Stuck')
             self.switchPlayer()
             self.field.curr_visited()
             color = self.field.isGoal()
             if color == 'Red':
                 self.view.change_screen(2, 'Red')
-                print('Red wins')
+                print('Goal')
             elif color == 'Blue':
                 self.view.change_screen(2 , 'Blue')
-                print('Blue wins')
+                print('Goal')
         else:
             print('Cant move')
-
     def set_field(self, width, height):
         self.field = Model.Field(width, height)
 

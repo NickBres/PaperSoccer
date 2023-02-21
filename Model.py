@@ -69,6 +69,9 @@ class Field:
         self.ball.x = toX
         self.ball.y = toY
 
+    def no_moves(self):
+        return len(self.point_free_neighbours(self.points[self.ball.y][self.ball.x])) == 0
+
     def set_walls(self):
         for line in self.points:
             for point in line:
@@ -123,7 +126,8 @@ class Field:
 
             for x in range(self.goal_size - 1):
                 self.red_lines.append((self.points[0][x + not_goal], self.points[0][x + not_goal + 1]))
-                self.blue_lines.append((self.points[self.height - 1][x + not_goal], self.points[self.height - 1][x + not_goal + 1]))
+                self.blue_lines.append(
+                    (self.points[self.height - 1][x + not_goal], self.points[self.height - 1][x + not_goal + 1]))
 
     def check_lines(self, fromPoint, toPoint):
         inWalls = (fromPoint, toPoint) in self.wall_lines or (toPoint, fromPoint) in self.wall_lines
