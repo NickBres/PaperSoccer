@@ -15,7 +15,7 @@ Make sure you have [Python](https://www.python.org/downloads/) and [PyGame](http
    ```
 ## Instructions
 
-On the first screen choose size of the field. Goal size will be always 3 but it can be changed manually. Field width, height and goal always has to be odd to make field symmetry.
+On the first screen choose size of the field. Goal size will be always 3 but it can be changed manually. Field width, height and goal always has to be odd to make field symmetry (measured in points).
 
 <img width="812" alt="image" src="https://user-images.githubusercontent.com/70432147/220419574-1d4cb2db-abc4-4bee-ab5e-a44e1894dc10.png">
 
