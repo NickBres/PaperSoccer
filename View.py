@@ -99,7 +99,7 @@ class View:
         self.lines = pygame.sprite.GroupSingle()
         self.lines.add(Lines(self.tile_size, self.field))
         self.ball = pygame.sprite.GroupSingle()
-        self.ball.add(Ball(self.field, self.tile_size))
+        self.ball.add(Ball(self.field, self.tile_size,self.controller))
         self.points = pygame.sprite.Group()
         self.build_field()
 
@@ -196,10 +196,13 @@ class Button(pygame.sprite.Sprite):
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, field, tilesize):
+    def __init__(self, field, tilesize , controller):
         super().__init__()
+        self.controller = controller
         self.tile_size = tilesize
-        self.image = pygame.image.load('graphics/ball.png').convert_alpha()
+        self.ball_b = pygame.image.load('graphics/balls/ball_b.png').convert_alpha()
+        self.ball_r = pygame.image.load('graphics/balls/ball_r.png').convert_alpha()
+        self.image = self.ball_b
         self.x = self.tile_size // 2 + (self.tile_size * field.ball.x)
         self.y = self.tile_size // 2 + (self.tile_size * field.ball.y)
         self.rect = self.image.get_rect(center=(self.x, self.y))
@@ -207,8 +210,11 @@ class Ball(pygame.sprite.Sprite):
     def update(self, field):
         self.x = self.tile_size // 2 + (self.tile_size * field.ball.x)
         self.y = self.tile_size // 2 + (self.tile_size * field.ball.y)
-        pygame.transform.rotate(self.image, 90)
         self.rect = self.image.get_rect(center=(self.x, self.y))
+        if self.controller.player:
+            self.image = self.ball_b
+        else:
+            self.image = self.ball_r
 
 
 class Lines(pygame.sprite.Sprite):
