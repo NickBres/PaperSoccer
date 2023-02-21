@@ -31,8 +31,10 @@ class Controller:
             elif color == 'Blue':
                 self.view.change_screen(2 , 'Blue')
                 print('Goal')
+            return True
         else:
             print('Cant move')
+            return False
     def set_field(self, width, height):
         self.field = Model.Field(width, height)
 

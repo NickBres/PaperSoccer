@@ -25,6 +25,10 @@ class View:
         self.text = self.font.render('is won', True, 'White')
         self.text_rect = self.text.get_rect(center=(self.screen_width / 4 - 50, self.screen_height / 2))
 
+        self.click = pygame.mixer.Sound('sound/click.mp3')
+        self.kick = pygame.mixer.Sound('sound/kick.mp3')
+        self.win = pygame.mixer.Sound('sound/win.mp3')
+
     def run(self):
         while True:
             for event in pygame.event.get():
@@ -35,12 +39,14 @@ class View:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         for tile in self.grass_tiles:
                             if tile.check_click(event.pos):
-                                self.controller.make_a_move(tile.x // self.tile_size, tile.y // self.tile_size)
+                                if self.controller.make_a_move(tile.x // self.tile_size, tile.y // self.tile_size):
+                                    self.kick.play()
 
                 if self.screen_num == 0:
                     if event.type == pygame.MOUSEBUTTONUP:
                         for button in self.buttons:
                             if button.check_click(event.pos):
+                                self.click.play()
                                 if button.type == 'Up1':
                                     self.counts.sprites()[0].increase()
                                 if button.type == 'Down1':
@@ -57,6 +63,7 @@ class View:
                 if self.screen_num == 2:
                     if event.type == pygame.MOUSEBUTTONUP:
                         if self.again.sprite.check_click(event.pos):
+                            self.click.play()
                             self.restart()
 
                 if self.screen_num == 0:
@@ -74,6 +81,7 @@ class View:
                     self.screen.blit(self.menu, (0, 0))
                     self.again.draw(self.screen)
                     self.screen.blit(self.text, self.text_rect)
+
 
                 pygame.display.update()
                 self.clock.tick(60)  # limit the loop to 60 times per sec
@@ -100,6 +108,7 @@ class View:
             self.screen_width = 10 * self.tile_size
             self.screen_height = 10 * self.tile_size
             self.text = self.font.render(player + ' won', True, 'White')
+            self.win.play()
         if screen_num == 1:
             self.screen_width = self.field.width * self.tile_size
             self.screen_height = self.field.height * self.tile_size
